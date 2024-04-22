@@ -1,0 +1,20 @@
+﻿@inject NavigationManager NavigationManager
+
+@code {
+    protected override void OnInitialized()
+    {
+        // Extract the relative URI path, excluding the base path if there's any.
+        var relativeUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+
+        // Ensure that the returnUrl is not the login page itself to avoid a redirect loop.
+        if (!relativeUrl.StartsWith("Account/Login", StringComparison.OrdinalIgnoreCase))
+        {
+            NavigationManager.NavigateTo($"Account/Login?returnUrl={Uri.EscapeDataString(relativeUrl)}", forceLoad: true);
+        }
+        else
+        {
+            // If the current page is the login page, no need to redirect.
+            // This prevents a loop in case the login component is accidentally protected by an AuthorizeView.
+        }
+    }
+}
